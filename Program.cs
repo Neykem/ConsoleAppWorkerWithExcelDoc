@@ -1,1 +1,6 @@
-﻿
+﻿using ClosedXML;
+
+namespace ConsoleAppWorkerWithExcelDoc
+{
+
+}
