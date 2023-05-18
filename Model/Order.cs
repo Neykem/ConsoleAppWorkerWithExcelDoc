@@ -10,7 +10,9 @@ namespace ConsoleAppWorkerWithExcelDoc.Model
     {
         public int IdOrder { get; set; }
         public int IdProduct { get; set; }
+        public Product? Product { get; set; }
         public int IdClient { get; set; }
+        public Client? Client { get; set; }
         public int NumberOrder { get; set; }
         public int Quantity { get; set; }
         public DateTime DatePosting { get; set; }

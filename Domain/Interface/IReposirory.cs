@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleAppWorkerWithExcelDoc.Domain.Interface
+﻿namespace ConsoleAppWorkerWithExcelDoc.Domain.Interface
 {
-    internal interface IOrderReposirory
+    //Итерфейс для универсального репозитория с обозначением методов и их асинхроного аналога
+    internal interface IReposirory<T>
     {
+        //Метод возврашающий коллекцию с загруженными данными из каталога
+        public List<T> LoadData();
+        public Task<List<T>> LoadDataAcync();
+        //Метод сохраняющий обьект в каталоге, должен возвращять результат успешности выполнения
+        public bool SaveNewData(T dataForSave);
+        public Task<bool> SaveNewDataAcync(T dataForSave);
+        //Метод обновляющий данные обьекта в каталоге, должен возвращять результат успешности выполнения
+        public bool Update(T oldDataobject, T dataForUpdate);
+        public Task<bool> UpdateAcync(T oldDataobject, T dataForUpdate);
     }
 }
