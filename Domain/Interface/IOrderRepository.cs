@@ -6,6 +6,8 @@ namespace ConsoleAppWorkerWithExcelDoc.Domain.Interface
     internal interface IOrderRepository : IReposirory<Order>
     {
         //возвращает коллекцию id пользователей с самым большим количеством подписок
-        public List<int> GetIdGoldenCustomerFromData(DateTime selectData);
+        public List<Client> GetIdGoldenCustomerFromData(DateTime dateTime);
+        public List<Order> GetOrdersByProductName(string productName);
+        public string ChangeClientContact(string organizationName, string newContactName);
     }
 }
