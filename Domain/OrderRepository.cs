@@ -9,12 +9,12 @@ namespace ConsoleAppWorkerWithExcelDoc.Domain
     public class OrderRepository : IOrderRepository
     {
         readonly string _filePath;
-        //private List<Order> _ordersBuffer {  get; set; }
+        private List<Order> _ordersBuffer { get; set; }
 
         public OrderRepository(string filePath)
         {
             _filePath = filePath;
-            //_ordersBuffer = LoadData();
+            _ordersBuffer = LoadData();
         }
 
         public List<Client> GetIdGoldenCustomerFromData(DateTime dateTime)
@@ -37,6 +37,7 @@ namespace ConsoleAppWorkerWithExcelDoc.Domain
             }
         }
 
+        //Метод загрузки данныых из файла
         public List<Order> LoadData()
         {
             List<Order> orders = new List<Order>();
@@ -53,6 +54,7 @@ namespace ConsoleAppWorkerWithExcelDoc.Domain
                 {
                     return orders;
                 }
+                //Пробе по строчкам, пропуская строку с названиями
                 IEnumerable<Row> rows = ordersWorksheetPart.Worksheet.GetFirstChild<SheetData>().Elements<Row>();
                 foreach (Row row in rows.Skip(1))
                 {
@@ -83,6 +85,7 @@ namespace ConsoleAppWorkerWithExcelDoc.Domain
             return orders;
         }
 
+        //Изменение данных клиента по номеру
         public string ChangeClientContact(string organizationName, string newContactName)
         {
             using (SpreadsheetDocument document = SpreadsheetDocument.Open(_filePath, true))
@@ -102,6 +105,7 @@ namespace ConsoleAppWorkerWithExcelDoc.Domain
 
                         document.Save();
 
+                        _ordersBuffer = LoadData();
                         return "Информация успешно сохранена!";
                     }
                 }
@@ -110,15 +114,28 @@ namespace ConsoleAppWorkerWithExcelDoc.Domain
             return "Организация не найдена!";
         }
 
+        // Метод для получения данных о заявке по кленту
+        public List<Order> GetOrdersByProductName(string productName)
+        {
+            if (_ordersBuffer == null)
+            {
+                _ordersBuffer = LoadData();
+            }
+            List<Order> filteredOrders = _ordersBuffer.Where(order => order.Product.Name == productName).ToList();
+            return filteredOrders;
+        }
+
+        //Метод для установки нового значения в ячейку
         private static void SetCellValue(Cell cell, string newData)
         {
             cell.DataType = new EnumValue<CellValues>(CellValues.String);
             cell.CellValue = new CellValue(newData);
         }
 
-
+        //Метод для получения значений в данной ячейке
         private static string GetCellValue(Cell cell, WorkbookPart workbookPart)
         {
+            //Нашел вот такую рекомендацию, на проверку типов, решил добавить ее )
             if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
             {
                 int sharedStringId = int.Parse(cell.InnerText);
@@ -185,39 +202,6 @@ namespace ConsoleAppWorkerWithExcelDoc.Domain
             }
 
             return null;
-        }
-
-
-        // Метод для получения данных о заявке по кленту
-        public List<Order> GetOrdersByProductName(string productName)
-        {
-            List<Order> orders = LoadData();
-            List<Order> filteredOrders = orders.Where(order => order.Product.Name == productName).ToList();
-            return filteredOrders;
-        }
-
-
-        public Task<List<Order>> LoadDataAcync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SaveNewData(Order dataForSave)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<bool> SaveNewDataAcync(Order dataForSave)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Update(Order oldDataobject, Order dataForUpdate)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<bool> UpdateAcync(Order oldDataobject, Order dataForUpdate)
-        {
-            throw new NotImplementedException();
         }
     }
 }
